@@ -93,12 +93,15 @@ class robo_binance:
         data_frame['Week_day'] = pd.to_datetime(data_frame['Open time'],unit='ms',utc=False).dt.day_name()
         data_frame['Change'] = data_frame['Close']/data_frame['Open']-1
         data_frame = data_frame[['Date','Week_day','Open','Close','Change']]
+        data_frame['Open'] = data_frame['Open'].astype(float)
+        data_frame['Close'] = data_frame['Close'].astype(float)
+        data_frame['Change'] = data_frame['Change'].astype(float)
         
         print(data_frame) 
         data_frame.to_csv('/Users/macbook/platzi/web_scraping_03/binance_bot/scripts/files/data_frame_WS.csv',sep=',')        
         
 bot = robo_binance('btcusdt', '30m')
-pprint(bot.market_time(300))
+pprint(bot.market_time(3))
 
 
     
