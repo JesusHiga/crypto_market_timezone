@@ -98,7 +98,7 @@ class robo_binance:
         data_frame.to_csv('/Users/macbook/platzi/web_scraping_03/binance_bot/scripts/files/data_frame_WS.csv',sep=',')        
         
 bot = robo_binance('btcusdt', '30m')
-pprint(bot.market_time(500))
+pprint(bot.market_time(300))
 
 
     
