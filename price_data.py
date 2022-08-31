@@ -1,6 +1,5 @@
 from pprint import pprint
 from binance.spot import Spot
-from numpy import inner, nan_to_num
 import config
 import pandas as pd
 import json
@@ -72,31 +71,55 @@ class robo_binance:
         
         #https://datascientyst.com/convert-datetime-day-of-week-name-number-in-pandas/
     
-    def market_time(self,x,limit: int=1):
+    def market_time(self,x,limit: int=1) -> pd.DataFrame :
+        
+        """nuevas dataframes, listas para concatenar"""  
         date = pd.DataFrame(columns=['Date'])
         open = pd.DataFrame(columns=['Open'])
         close = pd.DataFrame(columns=['Close'])
         day = pd.DataFrame(columns=['Week_day'])
+        
+        """for loop para agregar dias al dataframe"""
         for i in range(x):
-            df_open = pd.DataFrame(self.binance_client().klines(symbol=self.pair, interval=self.temporality, limit=limit, startTime=1641047400000+86400000*i), columns=['Open time','Open','High','Low','Close','Volume','Close time','Quote asset volume','Number of trades','Taker buy base asset volume','Taker buy quote asset volume','Ignore'],dtype=float) 
-            df_open['Date'] = pd.to_datetime(df_open['Open time'],unit='ms').dt.strftime(('%d-%m-%Y')) 
+            
+            #Variables de horarios de apertura y cierre por pais
+            new_york = 1641047400000
+            new_york_close = 1641069000000
+            london = 1641024000000
+            london_close = 1641052800000
+            tokyo = 1640995200000
+            tokyo_close = 1641015000000
+            
+            df_open = pd.DataFrame(self.binance_client().klines(symbol=self.pair, interval=self.temporality, limit=limit, startTime=new_york+86400000*i), columns=['Open time','Open','High','Low','Close','Volume','Close time','Quote asset volume','Number of trades','Taker buy base asset volume','Taker buy quote asset volume','Ignore'],dtype=float) 
+            df_open['Date'] = pd.to_datetime(df_open['Open time'],unit='ms').dt.strftime(('%Y-%m-%d')) 
             df_day = df_open[['Open time']]
             df_date = df_open[['Date']] 
             df_open = df_open[['Open']]
-            df_close = pd.DataFrame(self.binance_client().klines(symbol=self.pair, interval=self.temporality, limit=limit, startTime=1641069000000+86400000*i), columns=['Open time','Open','High','Low','Close','Volume','Close time','Quote asset volume','Number of trades','Taker buy base asset volume','Taker buy quote asset volume','Ignore'],dtype=float) 
+            
+            #Dataframe diferente para definir la hora de cierre
+            df_close = pd.DataFrame(self.binance_client().klines(symbol=self.pair, interval=self.temporality, limit=limit, startTime=new_york_close+86400000*i), columns=['Open time','Open','High','Low','Close','Volume','Close time','Quote asset volume','Number of trades','Taker buy base asset volume','Taker buy quote asset volume','Ignore'],dtype=float) 
             df_close = df_close[['Close']]
+            
+            #Concatenamos los dataframes induvidualmente con los nuevos
             date = pd.concat([date,df_date], ignore_index=True)
             open = pd.concat([open,df_open], ignore_index=True)
             close = pd.concat([close,df_close], ignore_index=True)
             day = pd.concat([day,df_day], ignore_index=True)
+            
+        #concatenamos todos los dataframes en uno solo    
         data_frame = pd.concat([date,open,close,day],axis=1)
+        
+        #agregamos dos columnas, week_day y change
         data_frame['Week_day'] = pd.to_datetime(data_frame['Open time'],unit='ms',utc=False).dt.day_name()
         data_frame['Change'] = data_frame['Close']/data_frame['Open']-1
+        #ordenamos las columnas
         data_frame = data_frame[['Date','Week_day','Open','Close','Change']]
+        #convertimos en float las columnas de datos numericos
         data_frame['Open'] = data_frame['Open'].astype(float)
         data_frame['Close'] = data_frame['Close'].astype(float)
         data_frame['Change'] = data_frame['Change'].astype(float)
         
+        #imprimimos y guardamos el resultado final
         print(data_frame) 
         data_frame.to_csv('/Users/macbook/platzi/web_scraping_03/binance_bot/scripts/files/data_frame_WS.csv',sep=',')        
         
@@ -106,5 +129,4 @@ pprint(bot.market_time(3))
 
     
 
-    # if __name__=="__main__":
-    #     print(candlestick('BTCBUSD'))
+  
