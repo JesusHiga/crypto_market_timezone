@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # d=[10,8,14,13,12,10,9]
     # d2=[3,1,7,6,5,3,2]
     # for j,i in zip(y,d2) :   
-    dt = datetime(2022,1,3,8,00,00)
+    dt = datetime(2022,1,5,8,00,00)
     tempo = timestamp(dt)
     print(tempo)
     print(dt)
