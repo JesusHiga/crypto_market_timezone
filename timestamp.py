@@ -12,11 +12,11 @@ if __name__ == '__main__':
     # d=[10,8,14,13,12,10,9]
     # d2=[3,1,7,6,5,3,2]
     # for j,i in zip(y,d2) :   
-    dt = datetime(2022,1,5,8,00,00)
+    dt = datetime(2021,1,1,21,30,00)
     tempo = timestamp(dt)
     print(tempo)
     print(dt)
-    a = 1667095200000
+    a = 1648342800000
     print(to_datetime(a,unit='ms').date())
     print(to_datetime(a,unit='ms').time())
         
