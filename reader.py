@@ -1,20 +1,17 @@
-from unicodedata import numeric
+
 import pandas as pd
 import numpy as np
 
 
-# df = pd.read_csv('/Users/macbook/platzi/web_scraping_03/binance_bot/scripts/files/data_frame_NY.csv', sep=',',dtype={'Open':np.float64,'Close':np.float64,'Change':np.float64},parse_dates=['Date'],encoding='utf-8',)
-# df = pd.DataFrame(df)
-
-# print(df)
-# print(df.info())
-# print(df.describe())
-
-
-list_dict = [
-                {'market':'tokyo',   'oh':1641002400000,'ch':1641022200000},
-                {'market':'london',  'oh':1648263600000,'ch':1651028400000},
-                {'market':'new_york','oh':1641047400000,'ch':1641069000000},
-                ]
-
-print(list_dict[0]['market'])
+def compil():
+    dataframe = pd.DataFrame()    
+    for i in range(18,23):
+        df = pd.read_csv(f'/Users/macbook/platzi/web_scraping_03/binance_bot/scripts/files/data_20{i}.csv',date_parser=True)
+        dataframe = pd.concat([dataframe,df],ignore_index=True)
+    dataframe = dataframe[['Date','Week_day','Market','Start','Finish','Open','Close','Change','Change_pct','Volume']]    
+    print(dataframe)
+        
+    return dataframe.to_csv('/Users/macbook/platzi/web_scraping_03/binance_bot/scripts/files/data_total.csv',sep=',',encoding='utf-8',columns=['Date','Week_day','Market','Start','Finish','Open','Close','Change','Change_pct','Volume'],index=False)    
+    
+if __name__=='__main__':
+    print(compil())    
