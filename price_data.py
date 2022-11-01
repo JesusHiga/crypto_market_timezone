@@ -52,7 +52,7 @@ class robo_binance:
         return candle    
     
 
-bot = robo_binance('btcusdt', '30m')
+bot = robo_binance('btcusdt', '15m')
 
 
 
